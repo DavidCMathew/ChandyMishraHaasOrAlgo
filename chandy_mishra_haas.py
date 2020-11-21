@@ -56,6 +56,7 @@ def cmh_receive(message_holder, nodes, gmq: GlobalQueue):
             print('Setting waitk[{}] = True and numk[{}] = |DS| = {}'.format(i, i, len(ds_k)))
             wait_k[i] = True
             num_k[i] = len(ds_k)
+            curr_node['engaging_process'] = j
 
         # if not engaging query
         else:
@@ -72,14 +73,14 @@ def cmh_receive(message_holder, nodes, gmq: GlobalQueue):
             num_k[i] = num_k[i] - 1
 
             if num_k[i] == 0:
-                print('-> {} has received reply for all nodes'.format(curr_node['name']), end=' -> ')
+                print('-> {} has received reply for all queries'.format(curr_node['name']), end=' -> ')
                 if i == k:
                     print('{}={} -> Deadlock detected at initiator: {}'.format(i, k, nodes[i]['name']))
                     curr_node['deadlock'] = True
                 else:
-                    print('{} != {} -> sending reply'.format(i, k))
-                    gmq.add_message(k, j, create_reply_message(i, k, i))
-                    print('Added message: {}({},{},{})'.format('reply', i, k, i))
-            else:
-                print('')  # Just for formatting output
-    print('node {} after processing message: {}\n'.format(curr_node['name'], curr_node))
+                    print('{} != {} -> sending reply to engaging process'.format(i, k))
+                    m = curr_node['engaging_process']
+                    gmq.add_message(k, j, create_reply_message(i, k, m))
+                    print('Added message: {}({},{},{})'.format('reply', i, k, m))
+
+    print('')  # For formatting output

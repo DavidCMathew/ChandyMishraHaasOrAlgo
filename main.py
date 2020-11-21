@@ -2,13 +2,11 @@ import input_handler as ih
 from chandy_mishra_haas import *
 
 gmq = GlobalQueue()
-
-initiator_node_index = 0
-
 all_nodes = ih.create_nodes()
+for i in all_nodes.keys():
+    print('{}->{}'.format(all_nodes[i]['name'], all_nodes[i]['dep_list']))
 
-for node in all_nodes.keys():
-    print(all_nodes[node])
+initiator_node_index = ih.read_initiator(all_nodes)
 
 print('Initiating Chandy Haas algorithm with initiator as {}'.format(initiator_node_index))
 initiator_node = all_nodes[initiator_node_index]
